@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 3D-Diffusion-Policy-lite
 A cleaned DP3 code base for 3D Robotic Manipulation tasks. Credit to [Yanjie Ze](https://github.com/yanjieze).
 Need [Segment Anything](https://github.com/facebookresearch/segment-anything#model-checkpoints) and [OWL-ViT](https://huggingface.co/docs/transformers/en/model_doc/owlvit) also.
@@ -121,3 +122,6 @@ your_pointcloud = ... # your point cloud data, numpy array with shape (N, 3) or 
 visualizer.visualize_pointcloud(your_pointcloud)
 ```
 This will show the point cloud in a web browser.
+=======
+# test
+>>>>>>> 9070498356e1ffff7846f9f17ddbe9b943feb971
