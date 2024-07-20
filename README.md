@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 3D-Diffusion-Policy-lite
 A cleaned DP3 code base for 3D Robotic Manipulation tasks. Credit to [Yanjie Ze](https://github.com/yanjieze).
 Need [Segment Anything](https://github.com/facebookresearch/segment-anything#model-checkpoints) and [OWL-ViT](https://huggingface.co/docs/transformers/en/model_doc/owlvit) also.
