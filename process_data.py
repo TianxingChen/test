@@ -32,7 +32,8 @@ while os.path.isdir(load_dir+f'/episode{folder_num}') and folder_num < num:
         with open(load_dir+f'/episode{folder_num}'+f'/{file_num}.pkl', 'rb') as file:
             data = pickle.load(file)
             pcd = data['pcd']['points']
-            x, y, z, yaw, pitch, roll, gripper= data['endpose']['x'], data['endpose']['y'], data['endpose']['z'], data['endpose']['yaw'], data['endpose']['pitch'], data['endpose']['roll'], data['endpose']['gripper']
+            x, y, z, yaw, pitch, roll, gripper= data['endpose']['x'], data['endpose']['y'], \
+                                                data['endpose']['z'], data['endpose']['yaw'], data['endpose']['pitch'], data['endpose']['roll'], data['endpose']['gripper']
             action = np.array([x, y, z, yaw, pitch, roll, gripper])
 
             point_cloud_sub_arrays.append(pcd)
