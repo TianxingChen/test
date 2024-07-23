@@ -1,0 +1,13 @@
+cd third_party
+git clone --depth 1 https://github.com/facebookresearch/pytorch3d.git
+cd pytorch3d
+pip install -e .
+cd ../..
+
+cd third_party/robomimic-0.2.0
+pip install -e .
+cd ../..
+
+cd 3D-Diffusion-Policy
+pip install -e .
+cd ..

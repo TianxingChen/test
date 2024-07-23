@@ -24,8 +24,14 @@ OmegaConf.register_new_resolver("eval", eval, replace=True)
         'diffusion_policy_3d', 'config'))
 )
 def main(cfg):
+    import pdb
+    pdb.set_trace()
     workspace = TrainDP3Workspace(cfg)
     workspace.eval()
+
+def get_workspace(cfg):
+    workspace = TrainDP3Workspace(cfg)
+    return workspace
 
 if __name__ == "__main__":
     main()

@@ -40,7 +40,7 @@ from diffusion_policy_3d.common.checkpoint_util import TopKCheckpointManager
 from diffusion_policy_3d.common.pytorch_util import dict_apply, optimizer_to
 from diffusion_policy_3d.model.diffusion.ema_model import EMAModel
 from diffusion_policy_3d.model.common.lr_scheduler import get_scheduler
-from utils.visualize_diff import visualize_diff
+# from utils.visualize_diff import visualize_diff
 
 OmegaConf.register_new_resolver("eval", eval, replace=True)
 
@@ -58,7 +58,7 @@ class TrainDP3Workspace:
         torch.manual_seed(seed)
         np.random.seed(seed)
         random.seed(seed)
-
+        
         # configure model
         self.model: DP3 = hydra.utils.instantiate(cfg.policy)
 
@@ -353,29 +353,34 @@ class TrainDP3Workspace:
         cfg = copy.deepcopy(self.cfg)
         
         lastest_ckpt_path = self.get_checkpoint_path(tag="latest")
+        lastest_ckpt_path = '/home/innox/Desktop/test/3D-Diffusion-Policy/diffusion_policy_3d/data/outputs/robot-robot_dp3-pick_and_place_seed0/checkpoints/latest.ckpt'
+        lastest_ckpt_path = pathlib.Path(lastest_ckpt_path)
+        print(lastest_ckpt_path.is_file())
+        pdb.set_trace()
+        
         if lastest_ckpt_path.is_file():
             cprint(f"Resuming from checkpoint {lastest_ckpt_path}", 'magenta')
             self.load_checkpoint(path=lastest_ckpt_path)
         
         # configure env
-        env_runner: BaseRunner
-        env_runner = hydra.utils.instantiate(
-            cfg.task.env_runner,
-            output_dir=self.output_dir)
-        assert isinstance(env_runner, BaseRunner)
+        # env_runner: BaseRunner
+        # env_runner = hydra.utils.instantiate(
+        #     cfg.task.env_runner,
+        #     output_dir=self.output_dir)
+        # assert isinstance(env_runner, BaseRunner)
         policy = self.model
         if cfg.training.use_ema:
             policy = self.ema_model
         policy.eval()
         policy.cuda()
-
-        runner_log = env_runner.run(policy)
+        pdb.set_trace()
+        # runner_log = env_runner.run(policy)
         
       
         cprint(f"---------------- Eval Results --------------", 'magenta')
-        for key, value in runner_log.items():
-            if isinstance(value, float):
-                cprint(f"{key}: {value:.4f}", 'magenta')
+        # for key, value in runner_log.items():
+        #     if isinstance(value, float):
+        #         cprint(f"{key}: {value:.4f}", 'magenta')
     
     def run_robot(self):
         # load the latest checkpoint

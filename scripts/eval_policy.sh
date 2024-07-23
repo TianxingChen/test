@@ -1,4 +1,4 @@
-# use the same command as training except the script
+ # use the same command as training except the script
 # for example:
 # bash scripts/eval_policy.sh dp3 adroit_hammer_pointcloud 0112 0 0
 
