@@ -5,7 +5,7 @@
 
 
 DEBUG=False
-save_ckpt=False
+save_ckpt=True
 
 alg_name=${1}
 # task choices: See TASK.md

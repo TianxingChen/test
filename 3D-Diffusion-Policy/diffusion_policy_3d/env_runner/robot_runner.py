@@ -192,5 +192,5 @@ class RobotRunner(BaseRunner):
         return log_data
 
 if __name__ == '__main__':
-    test = RobotRunner()
+    test = RobotRunner('./')
     print('ready')

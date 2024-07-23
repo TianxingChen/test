@@ -28,6 +28,9 @@ import sys
 sys.path.insert(0, '../')
 sys.path.append('3D-Diffusion-Policy/env_runner')
 sys.path.append('3D-Diffusion-Policy/diffusion_policy_3d/policy')
+sys.path.append('/data/chentianxing/ARIO/test/3D-Diffusion-Policy')
+sys.path.append('/data/chentianxing/ARIO/test/3D-Diffusion-Policy/diffusion_policy_3d')
+sys.path.append('/data/chentianxing/ARIO/test/3D-Diffusion-Policy/diffusion_policy_3d')
 
 from hydra.core.hydra_config import HydraConfig
 from diffusion_policy_3d.policy.dp3 import DP3
@@ -94,6 +97,7 @@ class TrainDP3Workspace:
             RUN_CKPT = True
             verbose = False
         
+        RUN_ROLLOUT = False
         RUN_VALIDATION = False # reduce time cost
         
         # resume training
@@ -140,13 +144,15 @@ class TrainDP3Workspace:
                 model=self.ema_model)
 
         # configure env
-        env_runner: BaseRunner
-        env_runner = hydra.utils.instantiate(
-            cfg.task.env_runner,
-            output_dir=self.output_dir)
+        # env_runner: BaseRunner
+        # env_runner = hydra.utils.instantiate(
+        #     cfg.task.env_runner,
+        #     output_dir=self.output_dir)
 
-        if env_runner is not None:
-            assert isinstance(env_runner, BaseRunner)
+        # if env_runner is not None:
+        #     assert isinstance(env_runner, BaseRunner)
+        
+        env_runner = None
         
         cfg.logging.name = str(cfg.logging.name)
         cprint("-----------------------------", "yellow")
@@ -288,7 +294,7 @@ class TrainDP3Workspace:
                         step_log['val_loss'] = val_loss
 
             # run diffusion sampling on a training batch
-            if (self.epoch % cfg.training.sample_every) == 0:
+            if self.epoch != 0 and (self.epoch % cfg.training.sample_every) == 0:
                 with torch.no_grad():
                     # sample trajectory from training set, and evaluate difference
                     batch = dict_apply(train_sampling_batch, lambda x: x.to(device, non_blocking=True))
@@ -310,6 +316,7 @@ class TrainDP3Workspace:
                 step_log['test_mean_score'] = - train_loss
                 
             # checkpoint
+            # if (self.epoch % cfg.training.checkpoint_every) == 0 and cfg.checkpoint.save_ckpt:
             if (self.epoch % cfg.training.checkpoint_every) == 0 and cfg.checkpoint.save_ckpt:
                 # checkpointing
                 if cfg.checkpoint.save_last_ckpt:
@@ -415,6 +422,7 @@ class TrainDP3Workspace:
             exclude_keys=None,
             include_keys=None,
             use_thread=False):
+        print('saved in ', path)
         if path is None:
             path = pathlib.Path(self.output_dir).joinpath('checkpoints', f'{tag}.ckpt')
         else:
