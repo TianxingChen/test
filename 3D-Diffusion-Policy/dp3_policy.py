@@ -1,58 +1,45 @@
-import sys
+if __name__ == "__main__":
+    import sys
+    import os
+    import pathlib
+
+    ROOT_DIR = str(pathlib.Path(__file__).parent.parent.parent)
+    sys.path.append(ROOT_DIR)
+    os.chdir(ROOT_DIR)
+
 import os
-import pathlib
 import hydra
-from omegaconf import OmegaConf, DictConfig
+import torch
+import dill
+from omegaconf import OmegaConf
+import pathlib
 from train import TrainDP3Workspace
 import pdb
 
-# =================
-# bash scripts/eval_policy.sh robot_dp3 robot pick_and_place 0 0
-DEBUG=False
+OmegaConf.register_new_resolver("eval", eval, replace=True)
+    
 
-alg_name='robot_dp3'
-task_name='robot'
-config_name=alg_name
-addition_info='pick_and_place'
-seed=0
-exp_name=f'{task_name}-{alg_name}-{addition_info}'
-run_dir=f"data/outputs/{exp_name}_seed{seed}"
-
-gpu_id=0
-# ================
-
-ROOT_DIR = str(pathlib.Path(__file__).parent.parent.parent)
-sys.path.append(ROOT_DIR)
-os.chdir(ROOT_DIR)
-
-# Define the configuration path and file name
-config_path = pathlib.Path(__file__).parent.joinpath('diffusion_policy_3d', 'config')
-config_name = 'robot_dp3.yaml'  # Replace with your actual config file name
-
-# Load the YAML file as a DictConfig object
-cfg = OmegaConf.load(os.path.join(config_path, config_name))
-
-pdb.set_trace()
-# Access configuration values
-print("Configuration loaded:")
-print(OmegaConf.to_yaml(cfg))
-
-
-# # Modify the configuration values as needed
-# # For example, setting the seed and debug mode
-cfg.hydra.run.dir=run_dir
-cfg.training.debug = DEBUG  # Replace with your desired seed
-cfg.training.seed = seed
-cfg.training.device = 'cuda:0'
-cfg.exp_name = exp_name
-
-# Now you can pass the modified configuration to your main function
-@hydra.main(config_path=config_path)
-def main(cfg: DictConfig) -> None:
-    print("Configuration loaded and modified:")
-    print(OmegaConf.to_yaml(cfg))  # Optional: Print the modified config for debugging
+@hydra.main(
+    version_base=None,
+    config_path=str(pathlib.Path(__file__).parent.joinpath(
+        'diffusion_policy_3d', 'config'))
+)
+def main(cfg):
     workspace = TrainDP3Workspace(cfg)
     workspace.eval()
 
+class DP3:
+    def __init__(self, cfg) -> None:
+        self.policy, self.env_runner = self.get_policy_and_runner(cfg)
+        
+    def get_action(self, observation):
+        action = self.env_runner.get_action(self.policy, observation)
+        return action    
+
+    def get_policy_and_runner(self, cfg):
+        workspace = TrainDP3Workspace(cfg)
+        policy, env_runner = workspace.get_policy_and_runner()
+        return policy, env_runner
+
 if __name__ == "__main__":
-    main(cfg)
+    main()

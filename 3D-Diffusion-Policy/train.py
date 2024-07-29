@@ -347,40 +347,30 @@ class TrainDP3Workspace:
             self.epoch += 1
             del step_log
 
-    def eval(self):
+    def get_policy_and_runner(self):
         # load the latest checkpoint
         
         cfg = copy.deepcopy(self.cfg)
+        env_runner: BaseRunner
+        env_runner = hydra.utils.instantiate(
+            cfg.task.env_runner,
+            output_dir=self.output_dir)
+        assert isinstance(env_runner, BaseRunner)
         
-        lastest_ckpt_path = self.get_checkpoint_path(tag="latest")
-        lastest_ckpt_path = '/home/innox/Desktop/test/3D-Diffusion-Policy/diffusion_policy_3d/data/outputs/robot-robot_dp3-pick_and_place_seed0/checkpoints/latest.ckpt'
+        lastest_ckpt_path = '/home/innox/Desktop/test/3D-Diffusion-Policy/diffusion_policy_3d/data/outputs/robot-robot_dp3-pick_and_place_seed0/checkpoints/pick_cup_with_liquid.ckpt'
         lastest_ckpt_path = pathlib.Path(lastest_ckpt_path)
         print(lastest_ckpt_path.is_file())
-        pdb.set_trace()
         
         if lastest_ckpt_path.is_file():
             cprint(f"Resuming from checkpoint {lastest_ckpt_path}", 'magenta')
             self.load_checkpoint(path=lastest_ckpt_path)
         
-        # configure env
-        # env_runner: BaseRunner
-        # env_runner = hydra.utils.instantiate(
-        #     cfg.task.env_runner,
-        #     output_dir=self.output_dir)
-        # assert isinstance(env_runner, BaseRunner)
         policy = self.model
         if cfg.training.use_ema:
             policy = self.ema_model
         policy.eval()
         policy.cuda()
-        pdb.set_trace()
-        # runner_log = env_runner.run(policy)
-        
-      
-        cprint(f"---------------- Eval Results --------------", 'magenta')
-        # for key, value in runner_log.items():
-        #     if isinstance(value, float):
-        #         cprint(f"{key}: {value:.4f}", 'magenta')
+        return policy, env_runner
     
     def run_robot(self):
         # load the latest checkpoint
